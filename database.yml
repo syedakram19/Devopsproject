@@ -35,3 +35,12 @@
         host: '%'
         priv: ci_database.*:ALL
         state: present
+    - name: Upload bookings.sql
+      copy:
+        src: bookings.sql
+        dest: /tmp/bookings.sql
+    - name: Import bookings.sql
+      mysql_db:
+        state: import
+        name: all
+        target: /tmp/bookings.sql

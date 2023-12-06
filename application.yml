@@ -4,19 +4,21 @@
     - name: restart Apache
       service: name=httpd state=restarted
   tasks:
+    - name: Install git client
+      yum: name=git state=present
+    - name: Download and deploy Swift
+      git:
+        repo: https://github.com/abohmeed/swift
+        dest: /var/www/html/CodeIgniter-3.1.5/
+        clone: yes
     - name: Install the Apache web server
       yum: name=httpd state=present
     - name: Ensure that Apache is started and enabled on system boot
       service: name=httpd state=started enabled=yes
     - name: Add EPEL repository
-      yum_repository:
-        name: epel
-        description: EPEL YUM repo
-        baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
-    - name: Add public key of EPEL
-      rpm_key:
+      yum:
+        name: https://mirrors.nic.cz/epel/7/x86_64/e/epel-release-7-10.noarch.rpm
         state: present
-        key: https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
     - name: Add Webtatic repository
       yum:
         name: https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
@@ -35,11 +37,7 @@
         - unzip
         - vim
         - mariadb
-    - name: Download and extract the CodeIgniter archive to /var/www/html
-      unarchive:
-        src: https://github.com/bcit-ci/CodeIgniter/archive/3.1.5.zip
-        dest: /var/www/html
-        remote_src: yes
+    
     - name: Change the files ownership to be owned by vagrant
       file:
         path: /var/www/html
